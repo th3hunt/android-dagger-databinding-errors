@@ -12,7 +12,12 @@ import android.view.View;
 
 import com.example.stratos.myapplication.databinding.ActivityMainBinding;
 
+import javax.inject.Inject;
+
 public class MainActivity extends AppCompatActivity {
+
+    @Inject
+    Dog dog;
 
     Foo foo;
 
@@ -23,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         foo = new Foo("bar");
-
-        System.out.println(br.hashCode());
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setFoo(foo);

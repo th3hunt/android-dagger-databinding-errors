@@ -1,37 +1,202 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
+
+// Manifest version information!
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.2'
+
+    dataBinding {
+        enabled = true
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
 
     defaultConfig {
-        applicationId "com.example.stratos.myapplication"
-        minSdkVersion 15
+        applicationId "com.workable"
+        minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        //Espresso
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        //RenderScript
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
+
+        multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix '.debug'
+        }
+        stg2 {
+            applicationIdSuffix '.stg2'
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+
+        stg3 {
+            applicationIdSuffix '.stg3'
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
     }
 
-    dataBinding {
-        enabled = true
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "android"
+            keyPassword "android"
+        }
+
     }
+
+
+    packagingOptions {
+
+        //Espresso excludes
+//        exclude 'META-INF/DEPENDENCIES.txt'
+//        exclude 'META-INF/LICENSE.txt'
+//        exclude 'META-INF/NOTICE.txt'
+//        exclude 'META-INF/NOTICE'
+//        exclude 'META-INF/LICENSE'
+//        exclude 'META-INF/DEPENDENCIES'
+//        exclude 'META-INF/notice.txt'
+//        exclude 'META-INF/license.txt'
+//        exclude 'META-INF/dependencies.txt'
+//        exclude 'META-INF/LGPL2.1'
+//        exclude 'LICENSE.txt'
+        //Espresso excludes
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+}
+
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven { url "http://dl.bintray.com/tbruyelle/tbruyelle" }
+    mavenCentral()
+
+
+}
+
+configurations.all {
+    resolutionStrategy.force 'com.android.support:support-annotations:23.1.1'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
-
+    //Dagger - Dependency Injection
     apt 'com.google.dagger:dagger-compiler:2.0.2'
     provided 'javax.annotation:jsr250-api:1.0'
     compile 'com.google.dagger:dagger:2.0.2'
 
+    //Support libraries
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-location:8.3.0'
+
+    compile 'pl.charmas.android:android-reactive-location:0.8@aar'
+    compile 'com.google.android.gms:play-services-auth:8.3.0'
+
+    compile 'com.android.support:support-annotations:23.1.1'
+
+    //compile 'com.android.support:support-v7:22.2.1'
+    //Retrofit - type-safe Rest client
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+
+    //OkHttp
+    compile 'com.squareup.okhttp3:okhttp:3.0.0'
+
+    //Image Loader
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+
+    //RxAndroid - RxJava bindings
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.3.0'
+    compile 'com.trello:rxlifecycle:0.3.1'
+    compile 'com.trello:rxlifecycle-components:0.3.1'
+
+    //BottomSheet
+    compile 'com.flipboard:bottomsheet-core:1.5.0'
+    compile 'com.flipboard:bottomsheet-commons:1.5.0'
+
+
+    //EventBus
+    compile 'de.greenrobot:eventbus:2.4.0'
+
+    //Rounded ImageView
+    compile 'com.makeramen:roundedimageview:2.2.1'
+
+    //LetteredView
+
+    //SwitcherViewBox
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    debugCompile 'com.facebook.stetho:stetho:1.2.0'
+    debugCompile 'com.facebook.stetho:stetho-okhttp:1.2.0'
+    debugCompile 'com.squareup.retrofit:retrofit-mock:1.9.0'
+    stg2Compile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    stg2Compile 'com.facebook.stetho:stetho:1.2.0'
+    stg2Compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
+    stg3Compile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    stg3Compile 'com.facebook.stetho:stetho:1.2.0'
+    stg3Compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
+
+    //Espresso UnitTesting
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.1'){
+        exclude group: 'javax.inject'
+    }
+    // TODO https://code.google.com/p/android-test-kit/issues/detail?id=157
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.1') {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+    }
+    androidTestCompile 'com.android.support.test:runner:0.4'
+    androidTestCompile 'com.android.support.test:rules:0.4'
+    androidTestCompile 'junit:junit:4.12'
+
+
+
+//    compile 'org.jetbrains:annotations:13.0'
+    compile 'org.cache2k:cache2k-api:0.21.1'
+    compile 'org.cache2k:cache2k-core:0.21.1'
+
+    compile 'net.danlew:android.joda:2.9.1'
+
+    compile 'com.joanzapata.pdfview:android-pdfview:1.0.4@aar'
+    compile 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.0.1'
+
+    // aws
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.10'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.10'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.10'
 }
