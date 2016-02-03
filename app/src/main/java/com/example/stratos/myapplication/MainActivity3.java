@@ -2,7 +2,6 @@ package com.example.stratos.myapplication;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.WorkSource;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,18 +10,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.stratos.myapplication.databinding.ActivityMain3Binding;
 import com.example.stratos.myapplication.databinding.ActivityMainBinding;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity3 extends AppCompatActivity {
 
     @Inject Foo foo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        ActivityMain3Binding binding = DataBindingUtil.setContentView(this, R.layout.activity_main3);
         MyApplication.component().inject(this);
         binding.setFoo(foo);
 

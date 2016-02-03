@@ -21,6 +21,6 @@ public class Foo extends BaseObservable{
 
     public void setBar(String bar) {
         this.bar = bar;
-        notifyPropertyChanged(BR.bar);
+        notifyPropertyChanged(com.example.stratos.myapplication.BR.bar);
     }
 }
